@@ -16,11 +16,8 @@ class PatientController extends Controller
     
     public function search(Request $request)
     {
-        //echo '111111111111111';die;
         $query = $request->get('query');
-        \Log::info('Received search query: ' . $query);
         $patients = Patient::search($query);
-        \Log::debug('Search results:', $patients->toArray());
         return response()->json($patients);
     }
 }

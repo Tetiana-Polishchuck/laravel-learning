@@ -69,6 +69,7 @@
 .patient-list li {
     padding: 10px;
     cursor: pointer;
+    background-color: #fff;
 }
 
 .patient-list li:hover {
@@ -108,6 +109,8 @@
 .container-loader{
     display: flex;
     justify-content: center;
+    align-items: center;
+    margin-top: 10px;
 }
 
 .loader {
@@ -131,3 +134,17 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+
+/* No results message */
+.no-results {
+    color: red;
+    margin-top: 10px;
+}
+
+/* Selected patient display */
+.selected-patient {
+    margin-top: 10px;
+    font-weight: bold;
+}
+

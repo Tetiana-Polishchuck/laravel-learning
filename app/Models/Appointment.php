@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 class Appointment extends Model
 {
@@ -28,7 +30,33 @@ class Appointment extends Model
             ->exists();
     }
 
-    public static function create(){
+    public static function createAppointment(array $data) :array {
+        DB::beginTransaction();
+        try {      
+            $appointment = self::create($data);
+            DB::commit();
+            return ['success' => true, 'appointment' => $appointment];
 
+        } catch (QueryException $e) {
+            DB::rollBack();
+            if ($e->errorInfo[1] == 1062) { // 1062 - код помилки для дубліката унікального ключа
+                return ['success' => false, 'error' => 'Doctor is already booked for this time'];
+            }
+            return ['success' => false, 'error' => 'An error occurred while creating the appointment'];
+        }
+    }
+
+    public static function get(int $id = 0){
+        $appointments = DB::table('appointments')
+            ->join('doctors', 'appointments.doctor_id', '=', 'doctors.id')
+            ->join('patients', 'appointments.patient_id', '=', 'patients.id')
+            ->select('appointments.id as appointment_id', 'appointments.start_time', 'appointments.end_time', 'doctors.name as doctor_name', 'doctors.specialty as doctor_specialty', 'patients.*')
+            ->when($id === 0, function ($query) {
+                return $query->orderBy('appointments.id', 'desc');
+            }, function ($query) use ($id) {
+                return $query->where('appointments.id', $id);
+            })
+            ->paginate(10);
+        return $appointments;       
     }
 }

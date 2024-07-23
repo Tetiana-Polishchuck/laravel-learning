@@ -31,20 +31,31 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-
 Route::group(['middleware' => ['auth', 'role:admin']], function() {
+    Route::resource('/doctors', DoctorController::class);
+});
+
+Route::group(['middleware' => ['auth', 'role:admin,manager']], function() {
+    Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
+    Route::post('/appointments/new', [AppointmentController::class, 'new'])->name('appointments.new');
+    Route::get('/appointments/all', [AppointmentController::class, 'appointments'])->name('appointments.all');
+    Route::get('/patients/search', [PatientController::class, 'search']);
+    Route::resource('appointments', 'AppointmentController');
+});
+
+
+/*
+Route::group(['middleware' => ['auth', 'userrole:admin']], function() {
     Route::resource('doctors', DoctorController::class);
 });
 
-Route::group(['middleware' => ['auth', 'role:manager']], function() {
+Route::group(['middleware' => ['auth', 'userrole:admin,manager']], function() {        
+   
     Route::resource('appointments', AppointmentController::class);
 });
 
-
 Route::get('appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-Route::post('appointments/new', [AppointmentController::class, 'store'])->name('appointments.new');
-
-Route::get('/patients/search', [PatientController::class, 'search']);
-
+Route::post('appointments/new', [AppointmentController::class, 'new'])->name('appointments.new');
+Route::get('/patients/search', [PatientController::class, 'search']);*/
 
 require __DIR__.'/auth.php';
