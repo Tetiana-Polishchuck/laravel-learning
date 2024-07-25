@@ -26,25 +26,25 @@ class AppointmentController extends Controller
                 'end_time' => 'required|date_format:Y-m-d\TH:i|after:start_time',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
+            return redirect()->back()->withErrors($e->errors());
         }
 
         $doctor = Doctor::findOrFail($request->doctor_id);
 
         if (!$doctor->is_active) {
-            return redirect()->back()->withErrors(['doctor' => 'The doctor is no longer available.']);
+            return redirect()->back()->withErrors('The doctor is no longer available.');
         }
 
         if ($doctor->is_on_vacation) {
-            return redirect()->back()->withErrors(['doctor' => 'The doctor is on vacation and cannot accept appointments.']);
+            return redirect()->back()->withErrors('The doctor is on vacation and cannot accept appointments.');
         }
 
         if ($doctor->is_on_sick_leave) {
-            return redirect()->back()->withErrors(['doctor' => 'The doctor is sick and cannot accept appointments.']);
+            return redirect()->back()->withErrors('The doctor is sick and cannot accept appointments.');
         }
 
         if (Appointment::hasConflict($request->doctor_id, $request->start_time, $request->end_time)) {
-            return redirect()->back()->withErrors(['appointment' => 'The doctor is already booked for this time slot.']);
+            return redirect()->back()->withErrors('The doctor is already booked for this time slot.');
         }
         $result = Appointment::createAppointment($validated);
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { router } from '@inertiajs/react'
+import NavButton from '../../Components/NavButton';
 
 const Create = ({ doctors }) => {
     const [selectedDoctor, setSelectedDoctor] = useState('');
@@ -15,12 +16,30 @@ const Create = ({ doctors }) => {
     const [formErrors, setFormErrors] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [noResults, setNoResults] = useState(false);
-
+    
+    const location = window.location;
 
     useEffect(() => {
         const uniqueSpecialties = [...new Set(doctors.map(doctor => doctor.specialty))];
         setSpecialties(uniqueSpecialties);
-    }, [doctors]);
+
+        const queryParams = new URLSearchParams(location.search);
+        const patientId = queryParams.get('patient');
+        if (patientId) {
+            const fetchPatient = async () => {
+                const response = await fetch(`/patients/patient/${patientId}`);
+                const data = await response.json();
+
+                if (data) {
+                    setSelectedPatientId(data.id);
+                    setSelectedPatientName(`${data.firstname} ${data.lastname}`);
+                }
+            };
+
+            fetchPatient();
+        }
+
+    }, [doctors, location.search]);
 
     const handleSpecialtyChange = (e) => {
         const specialty = e.target.value;
@@ -91,10 +110,10 @@ const Create = ({ doctors }) => {
             const localEndDateTime = new Date(endDateTime.getTime() - (offset * 60000));
             setAppointmentEnd(localEndDateTime.toISOString().slice(0, 16));
         } else {
-            const endDateTime = new Date(appointmentEnd);
+            const endDateTime = new Date(appointmentEnd);            
             if (endDateTime <= startDateTime) {
                 const offset = endDateTime.getTimezoneOffset();
-                const newEndDateTime = new Date(endDateTime.getTime() - (offset * 60000));
+                const newEndDateTime = new Date(startDateTime.getTime() - (offset * 60000) + 30 * 60000);
                 setAppointmentEnd(newEndDateTime.toISOString().slice(0, 16));
             }
         }
@@ -103,7 +122,7 @@ const Create = ({ doctors }) => {
     const handleEndChange = (e) => {
         const endTime = e.target.value;
         const startDateTime = new Date(appointmentStart);
-        const endDateTime = new Date(endTime);
+        const endDateTime = new Date(endTime);        
 
         if (endDateTime <= startDateTime) {
             setFormErrors('End time cannot be earlier than start time.');
@@ -126,6 +145,15 @@ const Create = ({ doctors }) => {
             patient_id: selectedPatientId,
             start_time: appointmentStart,
             end_time: appointmentEnd,
+        }, {
+            
+            onError: (errors) => {
+                if(typeof(errors) == 'object'){
+                    alert(JSON.stringify(errors));
+                }else{
+                    alert(errors);
+                }
+            }
         });
     };
 
@@ -134,6 +162,7 @@ const Create = ({ doctors }) => {
 
     return (
         <div className="appointment-form-container">
+            <NavButton href="/dashboard" className="w-full sm:w-auto mb-2">Dashboard</NavButton>
             <h1 id="appointment-form-container-title">Create Appointment</h1>
             <form onSubmit={handleSubmit} className="appointment-form">
                 <div className="form-group">

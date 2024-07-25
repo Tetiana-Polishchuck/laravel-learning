@@ -5,7 +5,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\PatientController;
 
@@ -36,26 +36,22 @@ Route::group(['middleware' => ['auth', 'role:admin']], function() {
 });
 
 Route::group(['middleware' => ['auth', 'role:admin,manager']], function() {
-    Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-    Route::post('/appointments/new', [AppointmentController::class, 'new'])->name('appointments.new');
-    Route::get('/appointments/all', [AppointmentController::class, 'appointments'])->name('appointments.all');
+    Route::get('/appointments/create', [App\Http\Controllers\AppointmentController::class, 'create'])->name('appointments.create');
+    Route::post('/appointments/new', [App\Http\Controllers\AppointmentController::class, 'new'])->name('appointments.new');
+    Route::get('/appointments/all', [App\Http\Controllers\AppointmentController::class, 'appointments'])->name('appointments.all');
+    Route::resource('appointments', App\Http\Controllers\AppointmentController::class);
+
     Route::get('/patients/search', [PatientController::class, 'search']);
-    Route::resource('appointments', 'AppointmentController');
+    Route::get('/patients/all', [PatientController::class, 'all'])->name('patients.all');
+    Route::get('/patients/patient/{id}', [PatientController::class, 'patient'])->name('patients.patient');
+
 });
 
 
-/*
-Route::group(['middleware' => ['auth', 'userrole:admin']], function() {
-    Route::resource('doctors', DoctorController::class);
+Route::middleware('auth')->group(function () {
+    Route::get('/user/role', [UserController::class, 'getUserRole']);
 });
 
-Route::group(['middleware' => ['auth', 'userrole:admin,manager']], function() {        
-   
-    Route::resource('appointments', AppointmentController::class);
-});
 
-Route::get('appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
-Route::post('appointments/new', [AppointmentController::class, 'new'])->name('appointments.new');
-Route::get('/patients/search', [PatientController::class, 'search']);*/
 
 require __DIR__.'/auth.php';
