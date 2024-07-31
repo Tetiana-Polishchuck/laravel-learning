@@ -36,5 +36,27 @@ class PatientController extends Controller
             return response()->json($patient);
         }
         return response()->json([]);
-}
+    }  
+    
+    public function create(){
+        return Inertia::render('Patient/CreatePatient', []);
+    }
+
+    public function new(Request $request){
+        try {
+            $validated = $request->validate([
+                'firstname' => 'required',
+                'lastname' => 'required',
+                'email' => 'required',
+                'phonenumber' => 'required',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors());
+        }
+        $result = Patient::create($validated);
+
+        return redirect()->route('patients.all')->with('success', "Пацієнт {$result->firstname} {$result->lastname} створений успішно.");
+
+
+    }
 }

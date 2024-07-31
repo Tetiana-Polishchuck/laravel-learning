@@ -44,6 +44,8 @@ Route::group(['middleware' => ['auth', 'role:admin,manager']], function() {
     Route::get('/patients/search', [PatientController::class, 'search']);
     Route::get('/patients/all', [PatientController::class, 'all'])->name('patients.all');
     Route::get('/patients/patient/{id}', [PatientController::class, 'patient'])->name('patients.patient');
+    Route::get('/patients/create', [PatientController::class, 'create'])->name('patients.create');
+    Route::post('/patients/new', [PatientController::class, 'new'])->name('patients.new');
 
 });
 

@@ -19,6 +19,8 @@ const PatientsList = ({patients}) => {
     return (
         <div className="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
             <NavButton href="/dashboard" className="w-full sm:w-auto mb-2">Dashboard</NavButton>
+            <NavButton href="/patients/create" className="w-full sm:w-auto mb-2 ml-2">Create Patient</NavButton>
+
             <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Patients List</h2>
                 <table className="min-w-full bg-white dark:bg-gray-900">
                     <thead>

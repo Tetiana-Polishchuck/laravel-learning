@@ -18,16 +18,31 @@ class Appointment extends Model
         return $this->belongsTo(Patient::class);
     }
 
-    public static function hasConflict(int $doctor_id, string $start_time, string $end_time)
+    public static function hasConflict(int $doctor_id, string $start_time, string $end_time, int $patient_id, ?int $current_appointment_id = null)
     {
-        return self::where('doctor_id', $doctor_id)
-            ->where(function($query) use ($start_time, $end_time) {
-                $query->whereBetween('start_time', [$start_time, $end_time])
-                      ->orWhereBetween('end_time', [$start_time, $end_time])
-                      ->orWhereRaw("? BETWEEN start_time AND end_time", [$start_time])
-                      ->orWhereRaw("? BETWEEN start_time AND end_time", [$end_time]);
+        
+        return self::where(function($query) use ($start_time, $end_time, $doctor_id) {
+                $query->where('doctor_id', $doctor_id)
+                      ->where(function ($query) use ($start_time, $end_time) {
+                          $query->whereBetween('start_time', [$start_time, $end_time])
+                                ->orWhereBetween('end_time', [$start_time, $end_time])
+                                ->orWhereRaw("? BETWEEN start_time AND end_time", [$start_time])
+                                ->orWhereRaw("? BETWEEN start_time AND end_time", [$end_time]);
+                      });
             })
-            ->exists();
+            ->orWhere(function ($query) use ($patient_id, $start_time, $end_time) {
+                $query->where('patient_id', $patient_id)
+                      ->where(function ($query) use ($start_time, $end_time) {
+                          $query->whereBetween('start_time', [$start_time, $end_time])
+                                ->orWhereBetween('end_time', [$start_time, $end_time])
+                                ->orWhereRaw("? BETWEEN start_time AND end_time", [$start_time])
+                                ->orWhereRaw("? BETWEEN start_time AND end_time", [$end_time]);
+                      });
+            })
+            ->when($current_appointment_id !== null, function ($query) use($current_appointment_id) {
+                return $query->where('appointments.id', '!=', $current_appointment_id);
+            })
+            ->pluck('id')->first();
     }
 
     public static function createAppointment(array $data) :array {
@@ -46,12 +61,12 @@ class Appointment extends Model
         }
     }
 
-    public static function get(int $id = 0){
+    public static function get(int $id = null){
         $appointments = DB::table('appointments')
             ->join('doctors', 'appointments.doctor_id', '=', 'doctors.id')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
             ->select('appointments.id as appointment_id', 'appointments.start_time', 'appointments.end_time', 'doctors.name as doctor_name', 'doctors.specialty as doctor_specialty', 'patients.*')
-            ->when($id === 0, function ($query) {
+            ->when($id === null, function ($query) {
                 return $query->orderBy('appointments.id', 'desc');
             }, function ($query) use ($id) {
                 return $query->where('appointments.id', $id);
@@ -59,4 +74,11 @@ class Appointment extends Model
             ->paginate(10);
         return $appointments;       
     }
+
+    public static function updateById (int $id, array $data) :bool {
+        return DB::table('appointments')
+            ->where('id', $id)
+            ->update($data);
+    }
+
 }

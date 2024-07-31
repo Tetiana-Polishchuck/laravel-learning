@@ -22,6 +22,7 @@ export default function Dashboard({ auth }) {
                             <NavButton href="/appointments/all" className="w-full sm:w-auto mb-2">Show Appointments</NavButton>
                             <NavButton href="/appointments/create" className="w-full sm:w-auto mb-2">Create New Appointment</NavButton>                    
                             <NavButton href="/patients/all" className="w-full sm:w-auto mb-2">Show Patients</NavButton>
+                            <NavButton href="/patients/create" className="w-full sm:w-auto mb-2">Create Patients</NavButton>
                         </div>
                     )}
                     {(role === 'admin') && (

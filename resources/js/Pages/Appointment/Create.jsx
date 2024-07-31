@@ -2,17 +2,29 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { router } from '@inertiajs/react'
 import NavButton from '../../Components/NavButton';
 
-const Create = ({ doctors }) => {
-    const [selectedDoctor, setSelectedDoctor] = useState('');
-    const [selectedSpecialty, setSelectedSpecialty] = useState('');
+const Create = ({ doctors, appointment }) => {
+    console.log('appointment', appointment ? appointment : 'no appointment');
+    const formatDateTime = (dateTime) => {
+        const date = new Date(dateTime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
+
+    const [selectedDoctor, setSelectedDoctor] = useState(appointment ? appointment.doctor_id : '');
+    const [selectedSpecialty, setSelectedSpecialty] = useState(appointment ? appointment.doctor.specialty : '');
     const [specialties, setSpecialties] = useState([]);
     const [filteredDoctors, setFilteredDoctors] = useState(doctors);
     const [patientSearch, setPatientSearch] = useState('');
     const [patients, setPatients] = useState([]);
-    const [selectedPatientId, setSelectedPatientId] = useState('');
-    const [selectedPatientName, setSelectedPatientName] = useState('');
-    const [appointmentStart, setAppointmentStart] = useState('');
-    const [appointmentEnd, setAppointmentEnd] = useState('');
+    const [selectedPatientId, setSelectedPatientId] = useState(appointment ? appointment.patient_id : '');
+    const [selectedPatientName, setSelectedPatientName] = useState(appointment ? appointment.patient.firstname +  appointment.patient.lastname : '');
+    const [appointmentStart, setAppointmentStart] = useState(appointment ? formatDateTime(appointment.start_time) : '');
+    const [appointmentEnd, setAppointmentEnd] = useState(appointment ? formatDateTime(appointment.end_time) : '');
     const [formErrors, setFormErrors] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [noResults, setNoResults] = useState(false);
@@ -140,21 +152,39 @@ const Create = ({ doctors }) => {
             return;
         }
         setFormErrors('');
-        router.post('/appointments/new', {
-            doctor_id: +selectedDoctor,
-            patient_id: selectedPatientId,
-            start_time: appointmentStart,
-            end_time: appointmentEnd,
-        }, {
-            
-            onError: (errors) => {
-                if(typeof(errors) == 'object'){
-                    alert(JSON.stringify(errors));
-                }else{
-                    alert(errors);
+        if(!appointment){
+            router.post('/appointments/new', {
+                doctor_id: +selectedDoctor,
+                patient_id: selectedPatientId,
+                start_time: appointmentStart,
+                end_time: appointmentEnd,
+            }, {            
+                onError: (errors) => {
+                    if(typeof(errors) == 'object'){
+                        alert(Object.values(errors));
+                    }else{
+                        alert(errors);
+                    }
                 }
-            }
-        });
+            });
+        } else{
+            router.patch('/appointments/'+appointment.id, {
+                doctor_id: +selectedDoctor,
+                patient_id: selectedPatientId,
+                start_time: appointmentStart,
+                end_time: appointmentEnd,
+            }, {            
+                onError: (errors) => {
+                    console.log('errors', errors);
+                    if(typeof(errors) == 'object'){
+                        alert(Object.values(errors));
+                    }else{
+                        alert(errors);
+                    }
+                }
+            });
+        }
+        
     };
 
     const isFormValid = selectedDoctor && selectedPatientId && appointmentStart && appointmentEnd;
@@ -163,7 +193,7 @@ const Create = ({ doctors }) => {
     return (
         <div className="appointment-form-container">
             <NavButton href="/dashboard" className="w-full sm:w-auto mb-2">Dashboard</NavButton>
-            <h1 id="appointment-form-container-title">Create Appointment</h1>
+            <h1 id="appointment-form-container-title">{appointment ? 'Update Appointment' : 'Create Appointment'}</h1>
             <form onSubmit={handleSubmit} className="appointment-form">
                 <div className="form-group">
                 <label htmlFor="specialtySelect">Specialty</label>
@@ -231,7 +261,7 @@ const Create = ({ doctors }) => {
                     />
                 </div>
                 {formErrors && <p className="form-errors">{formErrors}</p>}
-                <button type="submit" className="submit-button" disabled={!isFormValid}>Create Appointment</button>
+                <button type="submit" className="submit-button" disabled={!isFormValid}>{appointment ? 'Update Appointment' : 'Create Appointment'}</button>
             </form>
         </div>
     );

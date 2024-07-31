@@ -95,7 +95,7 @@ const All = ({ appointments }) => {
             {filteredAppointments.map((appointment) => (
               <tr key={appointment.appointment_id}>
                 <td className="border border-gray-200 p-2">
-                  <Link href={`/appointments/edit/${appointment.appointment_id}`} className="text-blue-500 underline">
+                  <Link href={`/appointments/${appointment.appointment_id}`} className="text-blue-500 underline">
                     {appointment.appointment_id}
                   </Link>
                 </td>
