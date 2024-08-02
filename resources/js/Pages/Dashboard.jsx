@@ -27,7 +27,7 @@ export default function Dashboard({ auth }) {
                     )}
                     {(role === 'admin') && (
                         <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg inline-flex flex-col">
-                            <NavButton href="/doctors/all" className="w-full sm:w-auto mb-2">Show Doctors</NavButton>
+                            <NavButton href="/doctors" className="w-full sm:w-auto mb-2">Show Doctors</NavButton>
                             <NavButton href="/doctor/create" className="w-full sm:w-auto mb-2">Create New Doctor</NavButton>                    
                         </div>
                     )}

@@ -79,8 +79,6 @@ class AppointmentController extends Controller
             return redirect()->back()->withErrors(['error' => 'Can not update data']);
 
         }
-
-        // Логіка редагування запису
     }
     public function destroy($id) {
         // Логіка видалення запису

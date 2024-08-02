@@ -1,0 +1,83 @@
+.doctor-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: #fff;
+}
+
+.doctor-container .specialty-label, .doctor-container .name-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.doctor-container #specialty, .doctor-container #name {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.doctor-container input[type="checkbox"] {
+    display: none;
+}
+
+.doctor-container .active-container,
+.doctor-container .vacation-container,
+.doctor-container .sick-container {
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.doctor-container .active-container label::before,
+.doctor-container .vacation-container label::before,
+.doctor-container .sick-container label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.doctor-container .active-container input[type="checkbox"]:checked + label::before,
+.doctor-container .vacation-container input[type="checkbox"]:checked + label::before,
+.doctor-container .sick-container input[type="checkbox"]:checked + label::before {
+    background-color: #4CAF50;
+}
+
+.doctor-container .active-container input[type="checkbox"]:checked + label::after,
+.doctor-container .vacation-container input[type="checkbox"]:checked + label::after,
+.doctor-container .sick-container input[type="checkbox"]:checked + label::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    width: 6px;
+    height: 12px;
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.doctor-container #submit-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.doctor-container #submit-button:hover {
+    background-color: #45a049;
+}

@@ -21,4 +21,22 @@ class Doctor extends Model
             ->get();
         return $affordableDoctors;
     }
+
+    public static function getWithAppointmentData($id = 0){
+        $currentDateTime = now();
+                
+        $doctors = DB::table('doctors')
+            ->select('doctors.*',
+                DB::raw("(SELECT COUNT(*) FROM appointments WHERE appointments.doctor_id = doctors.id AND appointments.start_time > '$currentDateTime') AS planed_visits"),
+                DB::raw("(SELECT COUNT(*) FROM appointments WHERE appointments.doctor_id = doctors.id AND appointments.start_time <= '$currentDateTime') AS done_visits")
+            )
+            ->when($id === 0, function ($query) {
+                return $query->orderBy('doctors.id', 'desc');
+            }, function ($query) use ($id) {
+                return $query->where('doctors.id', $id);
+            })
+            ->paginate(10);
+        return $doctors;   
+    }
+
 }
