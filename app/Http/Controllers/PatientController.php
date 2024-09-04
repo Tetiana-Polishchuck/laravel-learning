@@ -22,7 +22,7 @@ class PatientController extends Controller
         return response()->json($patients);
     }
 
-    public function all(){
+    public function list(){
         $patients = Patient::getWithAppointmentData();
         return Inertia::render('Patient/PatientList', [
             'patients' => $patients,
@@ -45,17 +45,17 @@ class PatientController extends Controller
     public function new(Request $request){
         try {
             $validated = $request->validate([
-                'firstname' => 'required',
-                'lastname' => 'required',
-                'email' => 'required',
-                'phonenumber' => 'required',
+                'firstname' => 'required|string|min:2|max:50',
+                'lastname' => 'required|string|min:2|max:50',
+                'email' => 'required|email|max:255',
+                'phonenumber' => 'required|string|min:9|max:30',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->errors());
         }
         $result = Patient::create($validated);
 
-        return redirect()->route('patients.all')->with('success', "Пацієнт {$result->firstname} {$result->lastname} створений успішно.");
+        return redirect()->route('patients.list')->with('success', "Пацієнт {$result->firstname} {$result->lastname} створений успішно.");
 
 
     }

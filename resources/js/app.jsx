@@ -7,6 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import '../css/appointment.css'; 
 import '../css/appointments.css'; 
 import '../css/doctor.css'; 
+import '../css/menu.css'; 
 
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';

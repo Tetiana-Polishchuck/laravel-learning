@@ -5,9 +5,11 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 
+
+
+
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
             <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
@@ -24,6 +26,67 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
                                 </NavLink>
+    
+                                {(user.role === 'admin') && (
+                                    <div className='menu-container'>
+                                        <Dropdown>
+                                            <Dropdown.Trigger>
+                                                <div className='inline-flex items-center px-1 pt-1 menu-link text-sm font-medium leading-5'>
+                                                    Doctors
+                                                </div>
+                                            </Dropdown.Trigger>
+                                            <Dropdown.Content>
+                                                <Dropdown.Link href={route('doctors.create')}>
+                                                    Create Doctor
+                                                </Dropdown.Link>
+                                                <Dropdown.Link href={route('doctors.list')}>
+                                                    List Doctors
+                                                </Dropdown.Link>
+                                            </Dropdown.Content>
+                                        </Dropdown>
+                                    </div>
+                                )}
+
+                                {(user.role === 'admin' || user.role === 'manager') && (
+                                    <>
+                                    <div className='menu-container'>
+                                        <Dropdown>
+                                            <Dropdown.Trigger>
+                                                <div className='inline-flex items-center px-1 pt-1 menu-link text-sm font-medium leading-5'>
+                                                    Appointments
+                                                </div>
+                                            </Dropdown.Trigger>
+                                            <Dropdown.Content>
+                                                <Dropdown.Link href={route('appointments.create')}>
+                                                    Create Appointment
+                                                </Dropdown.Link>
+                                                <Dropdown.Link href={route('appointments.list')}>
+                                                    List Appointments
+                                                </Dropdown.Link>
+                                            </Dropdown.Content>
+                                        </Dropdown>
+                                    </div>
+                                    <div className='menu-container'>
+                                        <Dropdown>
+                                            <Dropdown.Trigger>
+                                                <div className='inline-flex items-center px-1 pt-1 menu-link text-sm font-medium leading-5'>
+                                                    Patients
+                                                </div>
+                                            </Dropdown.Trigger>
+                                            <Dropdown.Content>
+                                                <Dropdown.Link href={route('patients.create')}>
+                                                    Add Patient
+                                                </Dropdown.Link>
+                                                <Dropdown.Link href={route('patients.list')}>
+                                                    List Patients
+                                                </Dropdown.Link>
+                                            </Dropdown.Content>
+                                        </Dropdown>                                       
+                                    </div>
+                                </>
+                                )}
+
+
                             </div>
                         </div>
 

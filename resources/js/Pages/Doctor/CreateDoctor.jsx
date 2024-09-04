@@ -1,9 +1,9 @@
 import React, {useState} from "react";
 import { router } from "@inertiajs/react";
-import NavButton from '../../Components/NavButton';
+import Authenticated from '@/Layouts/AuthenticatedLayout';
 
 
-const CreateDoctor = ({doctor}) => {
+const CreateDoctor = ({ doctor, auth }) => {
 
     const [name, setName] = useState(doctor ? doctor.name : '');
     const [specialty, setSpecialty] = useState(doctor ? doctor.specialty : '');
@@ -67,68 +67,71 @@ const CreateDoctor = ({doctor}) => {
       };
 
       return (
-        <div className="doctor-container">
-            <NavButton href="/dashboard" className="w-full sm:w-auto mb-2">Dashboard</NavButton>
-            <h1>Create Doctor</h1>
-            <form>
-                <div>
-                    <label className="name-label" htmlFor="name">Name</label>
-                    <input
-                        id="name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label className="specialty-label" htmlFor="specialty">Specialty</label>
-                    <input
-                        id="specialty"
+        <Authenticated
+            user={auth.user}
+        >
+            <div className="doctor-container">
+                <h1>Create Doctor</h1>
+                <form>
+                    <div>
+                        <label className="name-label" htmlFor="name">Name</label>
+                        <input
+                            id="name"
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="specialty-label" htmlFor="specialty">Specialty</label>
+                        <input
+                            id="specialty"
+                            className="custom-checkbox"
+                            type="text"
+                            value={specialty}
+                            onChange={(e) => setSpecialty(e.target.value)}
+                        />
+                    </div>
+                    <div className="active-container">                    
+                        <input
+                        id="active-input"
+                        type="checkbox"
                         className="custom-checkbox"
-                        type="text"
-                        value={specialty}
-                        onChange={(e) => setSpecialty(e.target.value)}
-                    />
-                </div>
-                <div className="active-container">                    
-                    <input
-                    id="active-input"
-                    type="checkbox"
-                    className="custom-checkbox"
-                    checked={isActive}
-                    onChange={handleActiveChange}
-                    />
-                    <label htmlFor="active-input">Active</label>
-                </div>
-                <div className="vacation-container">
-                    <input
-                    id="vacation-input"
-                    className="custom-checkbox"
-                    type="checkbox"
-                    checked={isOnVacation}
-                    onChange={handleVacationChange}
-                    />
-                    <label htmlFor="vacation-input">Vacation</label>
-                </div>
-                <div className="sick-container">                    
-                    <input
-                    id="sick-input"
-                    type="checkbox"
-                    checked={isSickLeave}
-                    onChange={handleSickLeaveChange}
-                    />                        
-                    <label htmlFor="sick-input">Sick</label>
-                </div>
-                <button
-                className="mt-2"
-                id="submit-button"
-                type="button"
-                onClick={handleCreate}
-                >
-                {doctor ? 'Update' : 'Create'}
-                </button>
-          </form>
-        </div>
+                        checked={isActive}
+                        onChange={handleActiveChange}
+                        />
+                        <label htmlFor="active-input">Active</label>
+                    </div>
+                    <div className="vacation-container">
+                        <input
+                        id="vacation-input"
+                        className="custom-checkbox"
+                        type="checkbox"
+                        checked={isOnVacation}
+                        onChange={handleVacationChange}
+                        />
+                        <label htmlFor="vacation-input">Vacation</label>
+                    </div>
+                    <div className="sick-container">                    
+                        <input
+                        id="sick-input"
+                        type="checkbox"
+                        checked={isSickLeave}
+                        onChange={handleSickLeaveChange}
+                        />                        
+                        <label htmlFor="sick-input">Sick</label>
+                    </div>
+                    <button
+                    className="mt-2"
+                    id="submit-button"
+                    type="button"
+                    onClick={handleCreate}
+                    >
+                    {doctor ? 'Update' : 'Create'}
+                    </button>
+            </form>
+            </div>
+        </Authenticated>    
       );
 }
 

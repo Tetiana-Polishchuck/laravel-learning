@@ -5,12 +5,15 @@ use App\Models\Doctor;
 use Inertia\Inertia;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 
 class DoctorController extends Controller
 {
     public function store(Request $request) {
         $checkRequest = $this->validateRequest(request());
-        if(!empty($checkingRequest['errors'])){
+
+        if(!empty($checkRequest['errors'])){
             return redirect()->back()->withErrors($checkRequest['errors']);
         }
         try {
@@ -49,7 +52,7 @@ class DoctorController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
-                'doctor_id' => 'required|string|max:255',
+                'specialty' => 'required|string|max:255',
                 'is_active' => 'required|boolean',
                 'is_on_vacation' => 'required|boolean',
                 'is_on_sick_leave' => 'required|boolean',

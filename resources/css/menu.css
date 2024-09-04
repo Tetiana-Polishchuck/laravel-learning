@@ -1,0 +1,9 @@
+.menu-container {
+    display: flex;
+    align-items: center;
+}
+
+.menu-container .menu-link{
+    cursor: pointer;
+}
+

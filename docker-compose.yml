@@ -56,6 +56,20 @@ services:
     networks:
       - laravel 
 
+  phpmyadmin-testing:
+    image: phpmyadmin:latest
+    container_name: testing_db_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: testing_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"  # Використайте інший порт, щоб не конфліктувати з основним phpMyAdmin
+    depends_on:
+      - testing_db  # Контейнер вашої тестової бази даних    
+    networks:
+      - laravel   
+
   testing_db:
     image: mysql:5.7
     environment:

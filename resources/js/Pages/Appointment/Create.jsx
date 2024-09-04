@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { router } from '@inertiajs/react'
-import NavButton from '../../Components/NavButton';
+import Authenticated from '@/Layouts/AuthenticatedLayout';
 
-const Create = ({ doctors, appointment }) => {
+
+const Create = ({ doctors, appointment, auth }) => {
     console.log('appointment', appointment ? appointment : 'no appointment');
     const formatDateTime = (dateTime) => {
         const date = new Date(dateTime);
@@ -191,79 +192,83 @@ const Create = ({ doctors, appointment }) => {
 
 
     return (
-        <div className="appointment-form-container">
-            <NavButton href="/dashboard" className="w-full sm:w-auto mb-2">Dashboard</NavButton>
-            <h1 id="appointment-form-container-title">{appointment ? 'Update Appointment' : 'Create Appointment'}</h1>
-            <form onSubmit={handleSubmit} className="appointment-form">
-                <div className="form-group">
-                <label htmlFor="specialtySelect">Specialty</label>
-                    <select id="specialtySelect" value={selectedSpecialty} onChange={handleSpecialtyChange} className="form-control">
-                        <option value="">Select Specialty</option>
-                        {specialties.map(specialty => (
-                            <option key={specialty} value={specialty}>{specialty}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="doctorSelect">Doctor:</label>
-                    <select id="doctorSelect" value={selectedDoctor} onChange={handleDoctorChange} className="form-control">
-                        <option value="">Select Doctor</option>
-                        {filteredDoctors.map(doctor => (
-                            <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="form-group" id="patient-form-group">
-                    <label htmlFor="patientInput">Patient:</label>
-                    <input
-                        id="patientInput"
-                        type="text"
-                        value={patientSearch || selectedPatientName} 
-                        onChange={handlePatientSearch}
-                        className="form-control"
-                        placeholder="Search patient by name or phone"
-                    />
-                    {isLoading && <div className="container-loader"><div className="loader"></div></div>}
-                    {noResults && <div className="no-results">No patients found</div>}
-                    {patients.length > 0 && (
-                        <ul className="patient-list">
-                            {patients.map(patient => (
-                                <li key={patient.id} onClick={() => handlePatientSelect(patient)}>
-                                    {patient.firstname} {patient.lastname} - {patient.phonenumber}
-                                </li>
+        <Authenticated
+            user={auth.user}
+        >
+            <div className="appointment-form-container">
+                <h1 id="appointment-form-container-title">{appointment ? 'Update Appointment' : 'Create Appointment'}</h1>
+                <form onSubmit={handleSubmit} className="appointment-form">
+                    <div className="form-group">
+                    <label htmlFor="specialtySelect">Specialty</label>
+                        <select id="specialtySelect" value={selectedSpecialty} onChange={handleSpecialtyChange} className="form-control">
+                            <option value="">Select Specialty</option>
+                            {specialties.map(specialty => (
+                                <option key={specialty} value={specialty}>{specialty}</option>
                             ))}
-                        </ul>
-                    )}
-                    {selectedPatientName && (
-                        <div className="selected-patient">
-                            Selected Patient: {selectedPatientName}
-                        </div>
-                    )}
-                </div>                
-                 <div className="form-group">
-                    <label htmlFor="startTimeInput">Start Appointment Time:</label>
-                    <input
-                        id="startTimeInput"
-                        type="datetime-local"
-                        name="appointmentStart"
-                        value={appointmentStart}
-                        onChange={handleStartChange}
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="endTimeInput">End Appointment Time:</label>
-                    <input
-                        id="endTimeInput"
-                        type="datetime-local"
-                        name="appointmentEnd"
-                        value={appointmentEnd}
-                        onChange={handleEndChange}
-                    />
-                </div>
-                {formErrors && <p className="form-errors">{formErrors}</p>}
-                <button type="submit" className="submit-button" disabled={!isFormValid}>{appointment ? 'Update Appointment' : 'Create Appointment'}</button>
-            </form>
-        </div>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="doctorSelect">Doctor:</label>
+                        <select id="doctorSelect" value={selectedDoctor} onChange={handleDoctorChange} className="form-control">
+                            <option value="">Select Doctor</option>
+                            {filteredDoctors.map(doctor => (
+                                <option key={doctor.id} value={doctor.id}>{doctor.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="form-group" id="patient-form-group">
+                        <label htmlFor="patientInput">Patient:</label>
+                        <input
+                            id="patientInput"
+                            type="text"
+                            value={patientSearch || selectedPatientName} 
+                            onChange={handlePatientSearch}
+                            className="form-control"
+                            placeholder="Search patient by name or phone"
+                        />
+                        {isLoading && <div className="container-loader"><div className="loader"></div></div>}
+                        {noResults && <div className="no-results">No patients found</div>}
+                        {patients.length > 0 && (
+                            <ul className="patient-list">
+                                {patients.map(patient => (
+                                    <li key={patient.id} onClick={() => handlePatientSelect(patient)}>
+                                        {patient.firstname} {patient.lastname} - {patient.phonenumber}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        {selectedPatientName && (
+                            <div className="selected-patient">
+                                Selected Patient: {selectedPatientName}
+                            </div>
+                        )}
+                    </div>                
+                    <div className="form-group">
+                        <label htmlFor="startTimeInput">Start Appointment Time:</label>
+                        <input
+                            id="startTimeInput"
+                            type="datetime-local"
+                            name="appointmentStart"
+                            value={appointmentStart}
+                            onChange={handleStartChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="endTimeInput">End Appointment Time:</label>
+                        <input
+                            id="endTimeInput"
+                            type="datetime-local"
+                            name="appointmentEnd"
+                            value={appointmentEnd}
+                            onChange={handleEndChange}
+                        />
+                    </div>
+                    {formErrors && <p className="form-errors">{formErrors}</p>}
+                    <button type="submit" className="submit-button" disabled={!isFormValid}>{appointment ? 'Update Appointment' : 'Create Appointment'}</button>
+                </form>
+            </div>
+        </Authenticated>
+
     );
 };
 

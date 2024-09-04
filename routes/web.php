@@ -32,17 +32,27 @@ Route::middleware('auth')->group(function () {
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::group(['middleware' => ['auth', 'role:admin']], function() {
-    Route::resource('/doctors', DoctorController::class);
+    Route::get('/doctors/list', [DoctorController::class, 'list'])->name('doctors.list');
+    Route::get('/doctors/doctor/{id}', [DoctorController::class, 'doctor'])->name('doctors.doctor');
+    Route::get('/doctors/create', [DoctorController::class, 'create'])->name('doctors.create');
+
 });
 
 Route::group(['middleware' => ['auth', 'role:admin,manager']], function() {
     Route::get('/appointments/create', [App\Http\Controllers\AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments/new', [App\Http\Controllers\AppointmentController::class, 'new'])->name('appointments.new');
-    Route::get('/appointments/all', [App\Http\Controllers\AppointmentController::class, 'appointments'])->name('appointments.all');
-    Route::resource('appointments', App\Http\Controllers\AppointmentController::class);
+    Route::get('/appointments', [App\Http\Controllers\AppointmentController::class, 'list'])->name('appointments.list');
+    Route::get('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'show'])->name('appointments.show');
+    Route::get('/appointments/index/{page}', [App\Http\Controllers\AppointmentController::class, 'index'])->name('appointments.index');
+    Route::delete('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'destroy'])->name('appointments.destroy');
 
+
+    
+
+
+    
     Route::get('/patients/search', [PatientController::class, 'search']);
-    Route::get('/patients/all', [PatientController::class, 'all'])->name('patients.all');
+    Route::get('/patients/list', [PatientController::class, 'list'])->name('patients.list');
     Route::get('/patients/patient/{id}', [PatientController::class, 'patient'])->name('patients.patient');
     Route::get('/patients/create', [PatientController::class, 'create'])->name('patients.create');
     Route::post('/patients/new', [PatientController::class, 'new'])->name('patients.new');
