@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
+        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
@@ -12,6 +12,7 @@
 
         <!-- Scripts -->
         @routes
+        @csrf
         @viteReactRefresh
         <!--@vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"]) -->
         @vite('resources/js/app.jsx')

@@ -94,8 +94,18 @@ class AppointmentController extends Controller
 
         }
     }
-    public function destroy($id) {
-        // Логіка видалення запису
+    public function destroy(int $id) {
+        try {
+            $deleted = Appointment::destroy($id);
+    
+            if ($deleted) {
+                return response()->json(['message' => 'Appointment deleted successfully'], 200);
+            }
+    
+            return response()->json(['message' => 'Appointment not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+        }
     }
 
     public function list (){
@@ -105,9 +115,10 @@ class AppointmentController extends Controller
         ]);
     }
 
-    public function index (int $page){
-        $appointments = Appointment::get('', $page);
-        echo json_encode(['data' => $appointments]);
+    public function index (Request $request){
+        $page = $request->input('page', 1);
+        $appointments = Appointment::get(null, $page);
+        return response()->json(['data' => $appointments]);
     }
 
     private function validateRequest(Request $request) :array{

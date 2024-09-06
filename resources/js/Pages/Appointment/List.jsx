@@ -11,7 +11,7 @@ const All = ({ appointments, auth }) => {
     const [patientName, setPatientName] = useState('');
     const [dateFilter, setDateFilter] = useState('');
     const [filteredAppointments, setFilteredAppointments] = useState(appointments.data);
-    const [currentAppointments, setAppointments] = useState(appointments);
+    const token = document.querySelector("[name='_token']").value;
 
 
     const handlePageChange = (url) => {
@@ -23,28 +23,41 @@ const All = ({ appointments, auth }) => {
 
     const handleDelete = (id) =>{
       if (confirm('Are you sure you want to delete this appointment?')) {
-        router.delete(`appointments.destroy/${id}`, {
-            onSuccess: () => {
-              alert('Appointment deleted successfully');
-              fetchAppointments();
-          },
-          onError: (error) => {
-            alert(error);
-          }
-        });
+        fetch('/appointments/' + id, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token 
+        },
+        })
+        .then((res) => res.json())
+        .then((data) => {
+          alert(data.message);
+          fetchAppointments();
+        })
+        .catch(err => alert(err));   
       }
     }
 
-    const fetchAppointments = () => {
-      // Приклад використання fetch для отримання нових даних
-      axios.get(route('appointments.index', { page: appointments.current_page }))
-          .then(response => {
-              setAppointments(response.data.appointments); // Припустимо, що відповідь містить дані в 'data'
-          })
-          .catch(error => {
-              console.error('Error fetching appointments', error);
-          });
-  }
+    const fetchAppointments = async () => {
+      try {
+        const response = await fetch(`/appointments/index/${appointments.current_page}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        const newAppointments = data.data;
+        if (newAppointments.length === 0 && appointments.current_page > 1) {
+          const prevPageResponse = await fetch(`/appointments/index/${appointments.current_page - 1}`);
+          const prevPageData = await prevPageResponse.json();
+          setFilteredAppointments(prevPageData.data);
+        } else {
+          setFilteredAppointments(newAppointments.data);
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+      }
+    };
 
     const debounce = (func, delay) => {
         let timeout;
@@ -140,7 +153,7 @@ const All = ({ appointments, auth }) => {
                   <td className="border border-gray-200 p-2">{new Date(appointment.start_time).toLocaleString()}</td>
                   <td className="border border-gray-200 p-2">{new Date(appointment.end_time).toLocaleString()}</td>
                   <td className="border border-gray-200 p-2">
-                    <FontAwesomeIcon onClick={() => handleDelete(appointment.id)} title='Delete Appointment' className='trash-icon' icon={faTrash} />
+                    <FontAwesomeIcon onClick={() => handleDelete(appointment.appointment_id)} title='Delete Appointment' className='trash-icon' icon={faTrash} />
                   </td>
                 </tr>
               ))}

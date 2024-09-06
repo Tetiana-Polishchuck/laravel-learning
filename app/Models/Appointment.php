@@ -62,8 +62,6 @@ class Appointment extends Model
     }
 
     public static function get(int $id = null, int $page = null){
-        $offset = 0;
-        if(!is_null($id)) $offset = $page*10;
         $appointments = DB::table('appointments')
             ->join('doctors', 'appointments.doctor_id', '=', 'doctors.id')
             ->join('patients', 'appointments.patient_id', '=', 'patients.id')
@@ -73,9 +71,8 @@ class Appointment extends Model
             }, function ($query) use ($id) {
                 return $query->where('appointments.id', $id);
             })
-            ->offset($offset)
-            ->paginate(10);
-        return $appointments;       
+            ->paginate(10, ['*'], 'page', $page);
+            return $appointments;       
     }
 
     public static function updateById (int $id, array $data) :bool {
