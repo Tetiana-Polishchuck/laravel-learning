@@ -29,6 +29,8 @@ const DoctorsList = ({ doctors, auth }) => {
                                 <th className="py-2 px-4 border-b">ID</th>
                                 <th className="py-2 px-4 border-b">Name</th>
                                 <th className="py-2 px-4 border-b">Specialty</th>
+                                <th className="py-2 px-4 border-b">Phone</th>
+                                <th className="py-2 px-4 border-b">Email</th>
                                 <th className="py-2 px-4 border-b">Done Appointment</th>
                                 <th className="py-2 px-4 border-b">Planned Appointment</th>
                                 <th className="py-2 px-4 border-b">Active</th>
@@ -40,8 +42,10 @@ const DoctorsList = ({ doctors, auth }) => {
                             {doctors.data.map((doctor) => (
                                 <tr key={doctor.id}>
                                     <td className="py-2 px-4 border-b">{doctor.id}</td>
-                                    <td className="py-2 px-4 border-b"><Link href={`doctors/${doctor.id}`} className="text-blue-500 underline">{doctor.name}</Link></td>
+                                    <td className="py-2 px-4 border-b"><Link href={`doctor/${doctor.id}`} className="text-blue-500 underline">{doctor.name}</Link></td>
                                     <td className="py-2 px-4 border-b">{doctor.specialty}</td>
+                                    <td className="py-2 px-4 border-b">{doctor.phone}</td>
+                                    <td className="py-2 px-4 border-b">{doctor.email}</td>
                                     <td className="py-2 px-4 border-b">{doctor.done_visits}</td>
                                     <td className="py-2 px-4 border-b">{doctor.planed_visits}</td>
                                     <td className="py-2 px-4 border-b">{doctor.is_active ? 'Yes' : 'No'}</td>

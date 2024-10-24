@@ -33,8 +33,12 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 Route::group(['middleware' => ['auth', 'role:admin']], function() {
     Route::get('/doctors/list', [DoctorController::class, 'list'])->name('doctors.list');
-    Route::get('/doctors/doctor/{id}', [DoctorController::class, 'doctor'])->name('doctors.doctor');
+    Route::get('/doctors/doctor/{id}', [DoctorController::class, 'show'])->name('doctors.show');
     Route::get('/doctors/create', [DoctorController::class, 'create'])->name('doctors.create');
+    Route::post('/doctors/store', [DoctorController::class, 'store'])->name('doctors.store');
+    Route::patch('/doctors/{id}', [DoctorController::class, 'update'])->name('doctors.update');
+
+    
 
 });
 
@@ -45,6 +49,7 @@ Route::group(['middleware' => ['auth', 'role:admin,manager']], function() {
     Route::get('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'show'])->name('appointments.show');
     Route::get('/appointments/index/{page}', [App\Http\Controllers\AppointmentController::class, 'index'])->name('appointments.index');
     Route::delete('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'destroy'])->name('appointments.destroy');
+    Route::patch('/appointments/{id}', [App\Http\Controllers\AppointmentController::class, 'update'])->name('appointments.update');
 
 
     

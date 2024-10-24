@@ -7,6 +7,7 @@ use App\Models\Doctor;
 use App\Models\Appointment; 
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use App\Events\AppointmentChanged;
 
 
 class AppointmentController extends Controller
@@ -20,12 +21,13 @@ class AppointmentController extends Controller
     }
 
     public function new(Request $request) {
+        Log::info(message:'new start');
+
         $checkingRequest = $this->validateRequest($request);
-        Log::info('checkingRequest', $checkingRequest);
 
         if(!empty($checkingRequest['errors'])){
             Log::info('step 1');
-            return redirect()->back()->withErrors($checkingRequest['errors']);
+            return redirect()->back()->withErrors(provider: $checkingRequest['errors']);
         }
 
         $checkingDoctor = $this->checkDoctor($request->doctor_id);
@@ -44,8 +46,14 @@ class AppointmentController extends Controller
 
         $result = Appointment::createAppointment($checkingRequest['data']);
         if ($result['success']) {
+            $appointment = $result['appointment']->load('doctor', 'patient');
+
+            Log::info('appointment', [$appointment]);
+
+            AppointmentChanged::dispatch($appointment);
+
             $appointments = Appointment::get();
-            Log::info('step 4');
+            Log::info(message:'end');
 
             return Inertia::render('Appointment/List', [
                 'appointments' => $appointments,

@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class CheckRole
 {
@@ -17,20 +19,20 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        \Log::info('Middleware CheckRole invoked');
+        Log::info('Middleware CheckRole invoked');
 
         if (!Auth::check()) {
             return redirect('login');
         }
 
-        \Log::info('User roles check', ['user' => Auth::user(), 'roles' => $roles]);
+        Log::info('User roles check', ['user' => Auth::user(), 'roles' => $roles]);
 
         if (Auth::user()->hasAnyRole($roles)) {
-            \Log::info('User hasAnyRole', [true]);
+            Log::info('User hasAnyRole', [true]);
             return $next($request);
         }
 
-        \Log::info('User hasAnyRole', [false]);
+        Log::info('User hasAnyRole', [false]);
         return redirect('/');
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class Doctor extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'specialty', 'is_active', 'is_on_vacation', 'is_on_sick_leave'];
+    protected $fillable = ['name', 'specialty', 'phone', 'email', 'is_active', 'is_on_vacation', 'is_on_sick_leave'];
     public function appointments() {
         return $this->hasMany(Appointment::class);
     }
@@ -37,6 +37,12 @@ class Doctor extends Model
             })
             ->paginate(10);
         return $doctors;   
+    }
+
+    public static function updateById (int $id, array $data) :bool {
+        return DB::table('doctors')
+            ->where('id', $id)
+            ->update($data);
     }
 
 }

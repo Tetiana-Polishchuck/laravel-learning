@@ -7,6 +7,8 @@ const CreateDoctor = ({ doctor, auth }) => {
 
     const [name, setName] = useState(doctor ? doctor.name : '');
     const [specialty, setSpecialty] = useState(doctor ? doctor.specialty : '');
+    const [phone, setPhone] = useState(doctor ? doctor.phone : '');
+    const [email, setEmail] = useState(doctor ? doctor.email : '');
     const [isActive, setIsActive] = useState(doctor ? doctor.is_active : true);
     const [isOnVacation, setIsOnVacation] = useState(doctor ? doctor.is_on_vacation : false);
     const [isSickLeave, setIsSickLeave] = useState(doctor ? doctor.is_on_sick_leave : false);
@@ -48,22 +50,55 @@ const CreateDoctor = ({ doctor, auth }) => {
           alert('Please fill in the name and the spacialty');
           return;
         }
-    
-        router.post('/doctors', {
+
+        if (phone.length < 9 || phone.length > 30) {
+            alert('Phone number must be between 9 and 30 characters.');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+        if (email.length > 254) {
+            alert('Email address must be no more than 254 characters.');
+            return;
+        }
+
+        const requestData = {
             name: name,
             specialty: specialty,
+            phone:phone,
+            email:email,
             is_active: isActive,
             is_on_vacation: isOnVacation,
             is_on_sick_leave:isSickLeave
-        }, {            
-            onError: (errors) => {
-                if(typeof(errors) == 'object'){
-                    alert(Object.values(errors));
-                }else{
-                    alert(errors);
+        };
+
+        if(!doctor){
+            router.post('/doctors/store', requestData, {            
+                onError: (errors) => {
+                    if(typeof(errors) == 'object'){
+                        alert(Object.values(errors));
+                    }else{
+                        alert(errors);
+                    }
                 }
-            }
-        });
+            });
+        } else{
+            router.patch('/doctors/'+doctor.id, requestData, {            
+                onError: (errors) => {
+                    console.log('errors', errors);
+                    if(typeof(errors) == 'object'){
+                        alert(Object.values(errors));
+                    }else{
+                        alert(errors);
+                    }
+                }
+            });
+        }    
+       
       };
 
       return (
@@ -71,7 +106,7 @@ const CreateDoctor = ({ doctor, auth }) => {
             user={auth.user}
         >
             <div className="doctor-container">
-                <h1>Create Doctor</h1>
+                <div className="title">Create Doctor</div>
                 <form>
                     <div>
                         <label className="name-label" htmlFor="name">Name</label>
@@ -90,6 +125,26 @@ const CreateDoctor = ({ doctor, auth }) => {
                             type="text"
                             value={specialty}
                             onChange={(e) => setSpecialty(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="phone-label" htmlFor="phone">Phone number</label>
+                        <input
+                            id="phone"
+                            className="custom-checkbox"
+                            type="text"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="email-label" htmlFor="email">Email</label>
+                        <input
+                            id="email"
+                            className="custom-checkbox"
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                     <div className="active-container">                    

@@ -6,14 +6,25 @@
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     background-color: #fff;
 }
+.doctor-container .title{
+    font-size: 2em;
+    font-weight: bold;
+}
 
-.doctor-container .specialty-label, .doctor-container .name-label {
+.doctor-container .specialty-label,
+.doctor-container .name-label, 
+.doctor-container .phone-label, 
+.doctor-container .email-label 
+{
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
 }
 
-.doctor-container #specialty, .doctor-container #name {
+.doctor-container #specialty,
+.doctor-container #name,
+.doctor-container #phone,
+.doctor-container #email {
     width: 100%;
     padding: 10px;
     margin-bottom: 16px;

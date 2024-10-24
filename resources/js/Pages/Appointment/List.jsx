@@ -69,9 +69,9 @@ const All = ({ appointments, auth }) => {
         };
     };
 
-    const handleViewAppointment = (id) => {
+    /*const handleViewAppointment = (id) => {
         router.get(`/appointments/${id}`);
-    };
+    };*/
 
 
     const filterAppointments = useCallback(() => {

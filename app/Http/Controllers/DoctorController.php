@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Log;
 class DoctorController extends Controller
 {
     public function store(Request $request) {
-        $checkRequest = $this->validateRequest(request());
-
+        $checkRequest = $this->validateRequest($request);
         if(!empty($checkRequest['errors'])){
             return redirect()->back()->withErrors($checkRequest['errors']);
         }
@@ -31,11 +30,15 @@ class DoctorController extends Controller
         // Логіка видалення лікаря
     }
 
-    public function show(){
-
+    public function show(int $id){
+        Log::info('show', [$id]);
+        $doctor = Doctor::find($id);
+        return Inertia::render('Doctor/CreateDoctor', [
+            'doctor' => $doctor
+        ]);
     }
 
-    public function index(){
+    public function list(){
         $doctors = Doctor::getWithAppointmentData();
         return Inertia::render('Doctor/DoctorList', [
             'doctors' => $doctors,
@@ -46,6 +49,24 @@ class DoctorController extends Controller
         return Inertia::render('Doctor/CreateDoctor', []);
     }
 
+    public function update (int $id, Request $request){
+        $checkingRequest = $this->validateRequest($request);
+        if(!empty($checkingRequest['errors'])){
+            return redirect()->back()->withErrors($checkingRequest['errors']);
+        }
+
+        $result = Doctor::updateById($id, $checkingRequest['data']);
+        if($result){
+            $doctors = Doctor::getWithAppointmentData();
+            return Inertia::render('Doctor/DoctorList', [
+                'doctors' => $doctors,
+            ]);
+        }else{
+            return redirect()->back()->withErrors(['error' => 'Can not update data']);
+
+        }
+    }
+
     private function validateRequest(Request $request) :array{
         $validated = '';
         $errors = '';
@@ -53,6 +74,8 @@ class DoctorController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'specialty' => 'required|string|max:255',
+                'phone' => 'required|string|max:30',
+                'email' => 'required|string|max:254',
                 'is_active' => 'required|boolean',
                 'is_on_vacation' => 'required|boolean',
                 'is_on_sick_leave' => 'required|boolean',

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('doctor_id')->constrained()->onDelete('cascade');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
+            $table->boolean('canceled')->default(false);
+            $table->boolean('done')->default(false);
             $table->timestamps();
             $table->unique(['doctor_id', 'start_time']);
         });

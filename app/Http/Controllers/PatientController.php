@@ -47,7 +47,7 @@ class PatientController extends Controller
             $validated = $request->validate([
                 'firstname' => 'required|string|min:2|max:50',
                 'lastname' => 'required|string|min:2|max:50',
-                'email' => 'required|email|max:255',
+                'email' => 'required|email|max:254',
                 'phonenumber' => 'required|string|min:9|max:30',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
